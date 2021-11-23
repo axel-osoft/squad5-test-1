@@ -170,7 +170,7 @@ options:
     version_added: "2.4"
   lock_timeout:
     description:
-      - How many seconds will this action wait to acquire a lock on the apt db.
+      - How many seconds will this action wait to aquire a lock on the apt db.
       - Sometimes there is a transitory lock and this will retry at least until timeout is hit.
     type: int
     default: 60
@@ -298,6 +298,18 @@ EXAMPLES = '''
 - name: Remove dependencies that are no longer required
   apt:
     autoremove: yes
+
+# Sometimes apt tasks fail because apt is locked by an autoupdate or by a race condition on a thread.
+# To check for a lock file before executing, and keep trying until the lock file is released:
+- name: Install packages only when the apt process is not locked
+  apt:
+    name: foo
+    state: present
+  register: apt_action
+  retries: 100
+  until: apt_action is success or ('Failed to lock apt for exclusive operation' not in apt_action.msg and '/var/lib/dpkg/lock' not in apt_action.msg)
+
+
 '''
 
 RETURN = '''
@@ -775,10 +787,10 @@ def install_deb(m, debs, cache, force, fail_on_autoremove, install_recommends, a
     pkgs_to_install = []
     for deb_file in debs.split(','):
         try:
-            pkg = apt.debfile.DebPackage(deb_file, cache=apt.Cache())
+            pkg = apt.debfile.DebPackage(deb_file)
             pkg_name = get_field_of_deb(m, deb_file, "Package")
             pkg_version = get_field_of_deb(m, deb_file, "Version")
-            if hasattr(apt_pkg, 'get_architectures') and len(apt_pkg.get_architectures()) > 1:
+            if len(apt_pkg.get_architectures()) > 1:
                 pkg_arch = get_field_of_deb(m, deb_file, "Architecture")
                 pkg_key = "%s:%s" % (pkg_name, pkg_arch)
             else:

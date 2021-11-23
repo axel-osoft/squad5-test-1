@@ -199,9 +199,7 @@ of ``Win32-OpenSSH`` from the GitHub Releases page when using it with Ansible
 on Windows hosts.
 
 To use SSH as the connection to a Windows host, set the following variables in
-the inventory:
-
-.. code-block:: shell
+the inventory::
 
     ansible_connection=ssh
 

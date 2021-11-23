@@ -109,8 +109,7 @@ options:
     elements: str
   skip_broken:
     description:
-      - Skip all unavailable packages or packages with broken dependencies
-        without raising an error. Equivalent to passing the --skip-broken option.
+      - Skip packages with broken dependencies(devsolve) and are causing problems.
     type: bool
     default: "no"
     version_added: "2.7"
@@ -242,7 +241,7 @@ extends_documentation_fragment:
 - action_common_attributes.flow
 attributes:
     action:
-        details: In the case of dnf, it has 2 action plugins that use it under the hood, M(ansible.builtin.yum) and M(ansible.builtin.package).
+        details: In the case of dnf, it has 2 action plugins that use it under the hood, M(yum) and M(package).
         support: partial
     async:
         support: none
@@ -1298,7 +1297,7 @@ class DnfModule(YumDnf):
                             fail = True
 
                         if fail:
-                            msg = 'Failed to validate GPG signature for {0}: {1}'.format(package, gpgerr)
+                            msg = 'Failed to validate GPG signature for {0}'.format(package)
                             self.module.fail_json(msg)
 
                 if self.download_only:

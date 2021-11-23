@@ -11,21 +11,15 @@ By default Ansible runs tasks synchronously, holding the connection to the remot
 Asynchronous ad hoc tasks
 -------------------------
 
-You can execute long-running operations in the background with :ref:`ad hoc tasks <intro_adhoc>`. For example, to execute ``long_running_operation`` asynchronously in the background, with a timeout (``-B``) of 3600 seconds, and without polling (``-P``):
-
-.. code-block:: bash
+You can execute long-running operations in the background with :ref:`ad hoc tasks <intro_adhoc>`. For example, to execute ``long_running_operation`` asynchronously in the background, with a timeout (``-B``) of 3600 seconds, and without polling (``-P``)::
 
     $ ansible all -B 3600 -P 0 -a "/usr/bin/long_running_operation --do-stuff"
 
-To check on the job status later, use the ``async_status`` module, passing it the job ID that was returned when you ran the original job in the background:
-
-.. code-block:: bash
+To check on the job status later, use the ``async_status`` module, passing it the job ID that was returned when you ran the original job in the background::
 
     $ ansible web1.example.com -m async_status -a "jid=488359678239.2844"
 
-Ansible can also check on the status of your long-running job automatically with polling. In most cases, Ansible will keep the connection to your remote node open between polls. To run for 30 minutes and poll for status every 60 seconds:
-
-.. code-block:: bash
+Ansible can also check on the status of your long-running job automatically with polling. In most cases, Ansible will keep the connection to your remote node open between polls. To run for 30 minutes and poll for status every 60 seconds::
 
     $ ansible all -B 1800 -P 60 -a "/usr/bin/long_running_operation --do-stuff"
 
@@ -43,9 +37,7 @@ Avoid connection timeouts: poll > 0
 
 If you want to set a longer timeout limit for a certain task in your playbook, use ``async`` with ``poll`` set to a positive value. Ansible will still block the next task in your playbook, waiting until the async task either completes, fails or times out. However, the task will only time out if it exceeds the timeout limit you set with the ``async`` parameter.
 
-To avoid timeouts on a task, specify its maximum runtime and how frequently you would like to poll for status:
-
-.. code-block:: yaml
+To avoid timeouts on a task, specify its maximum runtime and how frequently you would like to poll for status::
 
     ---
 
@@ -79,9 +71,7 @@ Run tasks concurrently: poll = 0
 
 If you want to run multiple tasks in a playbook concurrently, use ``async`` with ``poll`` set to 0. When you set ``poll: 0``, Ansible starts the task and immediately moves on to the next task without waiting for a result. Each async task runs until it either completes, fails or times out (runs longer than its ``async`` value). The playbook run ends without checking back on async tasks.
 
-To run a playbook task asynchronously:
-
-.. code-block:: yaml
+To run a playbook task asynchronously::
 
     ---
 
@@ -106,25 +96,23 @@ To run a playbook task asynchronously:
    You will need to manually clean this up with the :ref:`async_status <async_status_module>` module
    with ``mode: cleanup``.
 
-If you need a synchronization point with an async task, you can register it to obtain its job ID and use the :ref:`async_status <async_status_module>` module to observe it in a later task. For example:
+If you need a synchronization point with an async task, you can register it to obtain its job ID and use the :ref:`async_status <async_status_module>` module to observe it in a later task. For example::
 
-.. code-block:: yaml+jinja
+      - name: Run an async task
+        ansible.builtin.yum:
+          name: docker-io
+          state: present
+        async: 1000
+        poll: 0
+        register: yum_sleeper
 
-        - name: Run an async task
-          ansible.builtin.yum:
-            name: docker-io
-            state: present
-          async: 1000
-          poll: 0
-          register: yum_sleeper
-
-        - name: Check on an async task
-          async_status:
-            jid: "{{ yum_sleeper.ansible_job_id }}"
-          register: job_result
-          until: job_result.finished
-          retries: 100
-          delay: 10
+      - name: Check on an async task
+        async_status:
+          jid: "{{ yum_sleeper.ansible_job_id }}"
+        register: job_result
+        until: job_result.finished
+        retries: 100
+        delay: 10
 
 .. note::
    If the value of ``async:`` is not high enough, this will cause the
@@ -136,9 +124,7 @@ If you need a synchronization point with an async task, you can register it to o
    that requires the user to annotate changes with ``changed_when``, ``creates``,  and so on,
    then those should be added to the following ``async_status`` task.
 
-To run multiple asynchronous tasks while limiting the number of tasks running concurrently:
-
-.. code-block:: yaml+jinja
+To run multiple asynchronous tasks while limiting the number of tasks running concurrently::
 
     #####################
     # main.yml

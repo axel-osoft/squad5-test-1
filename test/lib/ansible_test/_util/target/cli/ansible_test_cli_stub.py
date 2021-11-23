@@ -11,7 +11,7 @@ import os
 import sys
 
 
-def main(args=None):  # type: (t.Optional[t.List[str]]) -> None
+def main():
     """Main program entry point."""
     ansible_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     source_root = os.path.join(ansible_root, 'test', 'lib')
@@ -30,7 +30,7 @@ def main(args=None):  # type: (t.Optional[t.List[str]]) -> None
     # noinspection PyProtectedMember
     from ansible_test._internal import main as cli_main
 
-    cli_main(args)
+    cli_main()
 
 
 def version_to_str(version):

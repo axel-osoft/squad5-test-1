@@ -11,9 +11,7 @@ Lookup plugins retrieve data from outside sources such as files, databases, key/
 Using lookups in variables
 ==========================
 
-You can populate variables using lookups. Ansible evaluates the value each time it is executed in a task (or template).
-
-.. code-block:: yaml+jinja
+You can populate variables using lookups. Ansible evaluates the value each time it is executed in a task (or template)::
 
     vars:
       motd_value: "{{ lookup('file', '/etc/motd') }}"

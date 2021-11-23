@@ -26,11 +26,12 @@ __metaclass__ = type
 import itertools
 import math
 
-from jinja2.filters import pass_environment
+from jinja2.filters import environmentfilter
 
 from ansible.errors import AnsibleFilterError, AnsibleFilterTypeError
 from ansible.module_utils.common.text import formatters
 from ansible.module_utils.six import binary_type, text_type
+from ansible.module_utils.six.moves import zip, zip_longest
 from ansible.module_utils.common._collections_compat import Hashable, Mapping, Iterable
 from ansible.module_utils._text import to_native, to_text
 from ansible.utils.display import Display
@@ -41,11 +42,16 @@ try:
 except ImportError:
     HAS_UNIQUE = False
 
+try:
+    from jinja2.filters import do_max, do_min
+    HAS_MIN_MAX = True
+except ImportError:
+    HAS_MIN_MAX = False
 
 display = Display()
 
 
-@pass_environment
+@environmentfilter
 # Use case_sensitive=None as a sentinel value, so we raise an error only when
 # explicitly set and cannot be handle (by Jinja2 w/o 'unique' or fallback version)
 def unique(environment, a, case_sensitive=None, attribute=None):
@@ -82,7 +88,7 @@ def unique(environment, a, case_sensitive=None, attribute=None):
     return c
 
 
-@pass_environment
+@environmentfilter
 def intersect(environment, a, b):
     if isinstance(a, Hashable) and isinstance(b, Hashable):
         c = set(a) & set(b)
@@ -91,7 +97,7 @@ def intersect(environment, a, b):
     return c
 
 
-@pass_environment
+@environmentfilter
 def difference(environment, a, b):
     if isinstance(a, Hashable) and isinstance(b, Hashable):
         c = set(a) - set(b)
@@ -100,7 +106,7 @@ def difference(environment, a, b):
     return c
 
 
-@pass_environment
+@environmentfilter
 def symmetric_difference(environment, a, b):
     if isinstance(a, Hashable) and isinstance(b, Hashable):
         c = set(a) ^ set(b)
@@ -110,13 +116,37 @@ def symmetric_difference(environment, a, b):
     return c
 
 
-@pass_environment
+@environmentfilter
 def union(environment, a, b):
     if isinstance(a, Hashable) and isinstance(b, Hashable):
         c = set(a) | set(b)
     else:
         c = unique(environment, a + b, True)
     return c
+
+
+@environmentfilter
+def min(environment, a, **kwargs):
+    if HAS_MIN_MAX:
+        return do_min(environment, a, **kwargs)
+    else:
+        if kwargs:
+            raise AnsibleFilterError("Ansible's min filter does not support any keyword arguments. "
+                                     "You need Jinja2 2.10 or later that provides their version of the filter.")
+        _min = __builtins__.get('min')
+        return _min(a)
+
+
+@environmentfilter
+def max(environment, a, **kwargs):
+    if HAS_MIN_MAX:
+        return do_max(environment, a, **kwargs)
+    else:
+        if kwargs:
+            raise AnsibleFilterError("Ansible's max filter does not support any keyword arguments. "
+                                     "You need Jinja2 2.10 or later that provides their version of the filter.")
+        _max = __builtins__.get('max')
+        return _max(a)
 
 
 def logarithm(x, base=math.e):
@@ -221,6 +251,10 @@ class FilterModule(object):
 
     def filters(self):
         filters = {
+            # general math
+            'min': min,
+            'max': max,
+
             # exponents and logarithms
             'log': logarithm,
             'pow': power,
@@ -245,7 +279,7 @@ class FilterModule(object):
 
             # zip
             'zip': zip,
-            'zip_longest': itertools.zip_longest,
+            'zip_longest': zip_longest,
 
         }
 

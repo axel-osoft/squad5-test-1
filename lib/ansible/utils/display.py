@@ -36,12 +36,18 @@ from termios import TIOCGWINSZ
 
 from ansible import constants as C
 from ansible.errors import AnsibleError, AnsibleAssertionError
-from ansible.module_utils._text import to_bytes, to_text
-from ansible.module_utils.six import text_type
+from ansible.module_utils._text import to_bytes, to_text, to_native
+from ansible.module_utils.six import with_metaclass, text_type
 from ansible.utils.color import stringc
 from ansible.utils.singleton import Singleton
 from ansible.utils.unsafe_proxy import wrap_var
 
+try:
+    # Python 2
+    input = raw_input
+except NameError:
+    # Python 3, we already have raw_input
+    pass
 
 _LIBC = ctypes.cdll.LoadLibrary(ctypes.util.find_library('c'))
 # Set argtypes, to avoid segfault if the wrong type is provided,
@@ -198,7 +204,7 @@ b_COW_PATHS = (
 )
 
 
-class Display(metaclass=Singleton):
+class Display(with_metaclass(Singleton, object)):
 
     def __init__(self, verbosity=0):
 

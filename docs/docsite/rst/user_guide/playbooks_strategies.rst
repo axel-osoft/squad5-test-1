@@ -10,18 +10,14 @@ By default, Ansible runs each task on all hosts affected by a play before starti
 
 Selecting a strategy
 --------------------
-The default behavior described above is the :ref:`linear strategy<linear_strategy>`. Ansible offers other strategies, including the :ref:`debug strategy<debug_strategy>` (see also  :ref:`playbook_debugger`) and the :ref:`free strategy<free_strategy>`, which allows each host to run until the end of the play as fast as it can:
-
-.. code-block:: yaml
+The default behavior described above is the :ref:`linear strategy<linear_strategy>`. Ansible offers other strategies, including the :ref:`debug strategy<debug_strategy>` (see also  :ref:`playbook_debugger`) and the :ref:`free strategy<free_strategy>`, which allows each host to run until the end of the play as fast as it can::
 
     - hosts: all
       strategy: free
       tasks:
-      # ...
+      ...
 
-You can select a different strategy for each play as shown above, or set your preferred strategy globally in ``ansible.cfg``, under the ``defaults`` stanza:
-
-.. code-block:: ini
+You can select a different strategy for each play as shown above, or set your preferred strategy globally in ``ansible.cfg``, under the ``defaults`` stanza::
 
     [defaults]
     strategy = free
@@ -30,9 +26,7 @@ All strategies are implemented as :ref:`strategy plugins<strategy_plugins>`. Ple
 
 Setting the number of forks
 ---------------------------
-If you have the processing power available and want to use more forks, you can set the number in ``ansible.cfg``:
-
-.. code-block:: ini
+If you have the processing power available and want to use more forks, you can set the number in ``ansible.cfg``::
 
     [defaults]
     forks = 30
@@ -51,10 +45,7 @@ Other keywords that affect play execution include ``ignore_errors``, ``ignore_un
 Setting the batch size with ``serial``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, Ansible runs in parallel against all the hosts in the :ref:`pattern <intro_patterns>` you set in the ``hosts:`` field of each play. If you want to manage only a few machines at a time, for example during a rolling update, you can define how many hosts Ansible should manage at a single time using the ``serial`` keyword:
-
-.. code-block:: yaml
-
+By default, Ansible runs in parallel against all the hosts in the :ref:`pattern <intro_patterns>` you set in the ``hosts:`` field of each play. If you want to manage only a few machines at a time, for example during a rolling update, you can define how many hosts Ansible should manage at a single time using the ``serial`` keyword::
 
     ---
     - name: test play
@@ -68,9 +59,8 @@ By default, Ansible runs in parallel against all the hosts in the :ref:`pattern 
         - name: second task
           command: hostname
 
-In the above example, if we had 6 hosts in the group 'webservers', Ansible would execute the play completely (both tasks) on 3 of the hosts before moving on to the next 3 hosts:
+In the above example, if we had 6 hosts in the group 'webservers', Ansible would execute the play completely (both tasks) on 3 of the hosts before moving on to the next 3 hosts::
 
-.. code-block:: ansible-output
 
     PLAY [webservers] ****************************************
 
@@ -105,9 +95,7 @@ In the above example, if we had 6 hosts in the group 'webservers', Ansible would
     web6      : ok=2    changed=2    unreachable=0    failed=0
 
 
-You can also specify a percentage with the ``serial`` keyword. Ansible applies the percentage to the total number of hosts in a play to determine the number of hosts per pass:
-
-.. code-block:: yaml
+You can also specify a percentage with the ``serial`` keyword. Ansible applies the percentage to the total number of hosts in a play to determine the number of hosts per pass::
 
     ---
     - name: test play
@@ -116,9 +104,7 @@ You can also specify a percentage with the ``serial`` keyword. Ansible applies t
 
 If the number of hosts does not divide equally into the number of passes, the final pass contains the remainder. In this example, if you had 20 hosts in the webservers group, the first batch would contain 6 hosts, the second batch would contain 6 hosts, the third batch would contain 6 hosts, and the last batch would contain 2 hosts.
 
-You can also specify batch sizes as a list. For example:
-
-.. code-block:: yaml
+You can also specify batch sizes as a list. For example::
 
     ---
     - name: test play
@@ -130,9 +116,7 @@ You can also specify batch sizes as a list. For example:
 
 In the above example, the first batch would contain a single host, the next would contain 5 hosts, and (if there are any hosts left), every following batch would contain either 10 hosts or all the remaining hosts, if fewer than 10 hosts remained.
 
-You can list multiple batch sizes as percentages:
-
-.. code-block:: yaml
+You can list multiple batch sizes as percentages::
 
     ---
     - name: test play
@@ -142,9 +126,7 @@ You can list multiple batch sizes as percentages:
         - "20%"
         - "100%"
 
-You can also mix and match the values:
-
-.. code-block:: yaml
+You can also mix and match the values::
 
     ---
     - name: test play
@@ -160,9 +142,7 @@ You can also mix and match the values:
 Restricting execution with ``throttle``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``throttle`` keyword limits the number of workers for a particular task. It can be set at the block and task level. Use ``throttle`` to restrict tasks that may be CPU-intensive or interact with a rate-limiting API:
-
-.. code-block:: yaml
+The ``throttle`` keyword limits the number of workers for a particular task. It can be set at the block and task level. Use ``throttle`` to restrict tasks that may be CPU-intensive or interact with a rate-limiting API::
 
     tasks:
     - command: /path/to/cpu_intensive_command
@@ -194,9 +174,7 @@ shuffle:
 Running on a single machine with ``run_once``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you want a task to run only on the first host in your batch of hosts, set ``run_once`` to true on that task:
-
-.. code-block:: yaml
+If you want a task to run only on the first host in your batch of hosts, set ``run_once`` to true on that task::
 
     ---
     # ...
@@ -210,16 +188,12 @@ If you want a task to run only on the first host in your batch of hosts, set ``r
 
         # ...
 
-Ansible executes this task on the first host in the current batch and applies all results and facts to all the hosts in the same batch. This approach is similar to applying a conditional to a task such as:
-
-.. code-block:: yaml
+Ansible executes this task on the first host in the current batch and applies all results and facts to all the hosts in the same batch. This approach is similar to applying a conditional to a task such as::
 
         - command: /opt/application/upgrade_db.py
           when: inventory_hostname == webservers[0]
 
-However, with ``run_once``, the results are applied to all the hosts. To run the task on a specific host, instead of the first host in the batch, delegate the task:
-
-.. code-block:: yaml
+However, with ``run_once``, the results are applied to all the hosts. To run the task on a specific host, instead of the first host in the batch, delegate the task::
 
         - command: /opt/application/upgrade_db.py
           run_once: true
