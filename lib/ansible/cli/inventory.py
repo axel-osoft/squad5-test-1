@@ -1,14 +1,9 @@
-#!/usr/bin/env python
 # Copyright: (c) 2017, Brian Coca <bcoca@ansible.com>
 # Copyright: (c) 2018, Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-# PYTHON_ARGCOMPLETE_OK
 
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
-
-# ansible.cli needs to be imported first, to ensure the source bin/* scripts run that code first
-from ansible.cli import CLI
 
 import sys
 
@@ -17,6 +12,7 @@ from operator import attrgetter
 
 from ansible import constants as C
 from ansible import context
+from ansible.cli import CLI
 from ansible.cli.arguments import option_helpers as opt_help
 from ansible.errors import AnsibleError, AnsibleOptionsError
 from ansible.module_utils._text import to_bytes, to_native, to_text
@@ -49,8 +45,6 @@ INTERNAL_VARS = frozenset(['ansible_diff_mode',
 
 class InventoryCLI(CLI):
     ''' used to display or dump the configured inventory as Ansible sees it '''
-
-    name = 'ansible-inventory'
 
     ARGUMENTS = {'host': 'The name of a host to match in the inventory, relevant when using --list',
                  'group': 'The name of a group in the inventory, relevant when using --graph', }
@@ -408,11 +402,3 @@ class InventoryCLI(CLI):
         results = format_group(top)
 
         return results
-
-
-def main(args=None):
-    InventoryCLI.cli_executor(args)
-
-
-if __name__ == '__main__':
-    main()

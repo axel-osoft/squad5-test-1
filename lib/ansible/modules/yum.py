@@ -98,8 +98,7 @@ options:
     version_added: "1.2"
   skip_broken:
     description:
-      - Skip all unavailable packages or packages with broken dependencies
-        without raising an error. Equivalent to passing the --skip-broken option.
+      - Skip packages with broken dependencies(devsolve) and are causing problems.
     type: bool
     default: "no"
     version_added: "2.3"
@@ -248,7 +247,7 @@ extends_documentation_fragment:
 - action_common_attributes.flow
 attributes:
     action:
-        details: In the case of yum, it has 2 action plugins that use it under the hood, M(ansible.builtin.yum) and M(ansible.builtin.package).
+        details: In the case of yum, it has 2 action plugins that use it under the hood, M(yum) and M(package).
         support: partial
     async:
         support: none

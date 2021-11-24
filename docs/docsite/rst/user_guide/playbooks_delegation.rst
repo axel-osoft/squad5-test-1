@@ -18,9 +18,7 @@ Some tasks always execute on the controller. These tasks, including ``include``,
 Delegating tasks
 ----------------
 
-If you want to perform a task on one host with reference to other hosts, use the ``delegate_to`` keyword on a task. This is ideal for managing nodes in a load balanced pool or for controlling outage windows. You can use delegation with the :ref:`serial <rolling_update_batch_size>` keyword to control the number of hosts executing at one time:
-
-.. code-block:: yaml
+If you want to perform a task on one host with reference to other hosts, use the ``delegate_to`` keyword on a task. This is ideal for managing nodes in a load balanced pool or for controlling outage windows. You can use delegation with the :ref:`serial <rolling_update_batch_size>` keyword to control the number of hosts executing at one time::
 
     ---
     - hosts: webservers
@@ -40,9 +38,7 @@ If you want to perform a task on one host with reference to other hosts, use the
           ansible.builtin.command: /usr/bin/add_back_to_pool {{ inventory_hostname }}
           delegate_to: 127.0.0.1
 
-The first and third tasks in this play run on 127.0.0.1, which is the machine running Ansible. There is also a shorthand syntax that you can use on a per-task basis: ``local_action``. Here is the same playbook as above, but using the shorthand syntax for delegating to 127.0.0.1:
-
-.. code-block:: yaml
+The first and third tasks in this play run on 127.0.0.1, which is the machine running Ansible. There is also a shorthand syntax that you can use on a per-task basis: ``local_action``. Here is the same playbook as above, but using the shorthand syntax for delegating to 127.0.0.1::
 
     ---
     # ...
@@ -56,9 +52,7 @@ The first and third tasks in this play run on 127.0.0.1, which is the machine ru
         - name: Add back to load balancer pool
           local_action: ansible.builtin.command /usr/bin/add_back_to_pool {{ inventory_hostname }}
 
-You can use a local action to call 'rsync' to recursively copy files to the managed servers:
-
-.. code-block:: yaml
+You can use a local action to call 'rsync' to recursively copy files to the managed servers::
 
     ---
     # ...
@@ -69,9 +63,7 @@ You can use a local action to call 'rsync' to recursively copy files to the mana
 
 Note that you must have passphrase-less SSH keys or an ssh-agent configured for this to work, otherwise rsync asks for a passphrase.
 
-To specify more arguments, use the following syntax:
-
-.. code-block:: yaml
+To specify more arguments, use the following syntax::
 
     ---
     # ...
@@ -100,9 +92,7 @@ Delegation and parallel execution
 By default Ansible tasks are executed in parallel. Delegating a task does not change this and does not handle concurrency issues (multiple forks writing to the same file).
 Most commonly, users are affected by this when updating a single file on a single delegated to host for all hosts (using the ``copy``, ``template``, or ``lineinfile`` modules, for example). They will still operate in parallel forks (default 5) and overwrite each other.
 
-This can be handled in several ways:
-
-.. code-block:: yaml
+This can be handled in several ways::
 
     - name: "handle concurrency with a loop on the hosts with `run_once: true`"
       lineinfile: "<options here>"
@@ -116,9 +106,7 @@ By using an intermediate play with  `serial: 1` or using  `throttle: 1` at task 
 Delegating facts
 ----------------
 
-Delegating Ansible tasks is like delegating tasks in the real world - your groceries belong to you, even if someone else delivers them to your home. Similarly, any facts gathered by a delegated task are assigned by default to the `inventory_hostname` (the current host), not to the host which produced the facts (the delegated to host). To assign gathered facts to the delegated host instead of the current host, set ``delegate_facts`` to ``true``:
-
-.. code-block:: yaml
+Delegating Ansible tasks is like delegating tasks in the real world - your groceries belong to you, even if someone else delivers them to your home. Similarly, any facts gathered by a delegated task are assigned by default to the `inventory_hostname` (the current host), not to the host which produced the facts (the delegated to host). To assign gathered facts to the delegated host instead of the current host, set ``delegate_facts`` to ``true``::
 
     ---
     - hosts: app_servers
@@ -140,16 +128,12 @@ Local playbooks
 It may be useful to use a playbook locally on a remote host, rather than by connecting over SSH.  This can be useful for assuring the configuration of a system by putting a playbook in a crontab.  This may also be used
 to run a playbook inside an OS installer, such as an Anaconda kickstart.
 
-To run an entire playbook locally, just set the ``hosts:`` line to ``hosts: 127.0.0.1`` and then run the playbook like so:
-
-.. code-block:: shell
+To run an entire playbook locally, just set the ``hosts:`` line to ``hosts: 127.0.0.1`` and then run the playbook like so::
 
     ansible-playbook playbook.yml --connection=local
 
 Alternatively, a local connection can be used in a single playbook play, even if other plays in the playbook
-use the default remote connection type:
-
-.. code-block:: yaml
+use the default remote connection type::
 
     ---
     - hosts: 127.0.0.1

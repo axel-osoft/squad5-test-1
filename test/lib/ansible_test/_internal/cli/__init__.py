@@ -20,7 +20,7 @@ from .compat import (
 )
 
 
-def parse_args(argv=None):  # type: (t.Optional[t.List[str]]) -> argparse.Namespace
+def parse_args():  # type: () -> argparse.Namespace
     """Parse command line arguments."""
     completer = CompositeActionCompletionFinder()
 
@@ -29,7 +29,7 @@ def parse_args(argv=None):  # type: (t.Optional[t.List[str]]) -> argparse.Namesp
     else:
         epilog = 'Install the "argcomplete" python package to enable tab completion.'
 
-    parser = argparse.ArgumentParser(prog='ansible-test', epilog=epilog)
+    parser = argparse.ArgumentParser(epilog=epilog)
 
     do_commands(parser, completer)
 
@@ -38,10 +38,7 @@ def parse_args(argv=None):  # type: (t.Optional[t.List[str]]) -> argparse.Namesp
         always_complete_options=False,
     )
 
-    if argv is None:
-        argv = sys.argv[1:]
-    else:
-        argv = argv[1:]
+    argv = sys.argv[1:]
     args = parser.parse_args(argv)
 
     if args.explain and not args.verbosity:

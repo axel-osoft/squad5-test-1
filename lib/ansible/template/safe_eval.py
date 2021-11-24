@@ -19,10 +19,12 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import ast
-import builtins
+import sys
 
-from ansible.module_utils.common.text.converters import to_native
+from ansible import constants as C
+from ansible.module_utils.common.text.converters import container_to_text, to_native
 from ansible.module_utils.six import string_types
+from ansible.module_utils.six.moves import builtins
 
 
 def safe_eval(expr, locals=None, include_exceptions=False):

@@ -187,7 +187,8 @@ class TestTemplarTemplate(BaseTemplar, unittest.TestCase):
         self.assertTrue(res)
         self.assertEqual(res, 'bar')
 
-    def test_template_convert_data_template_in_data(self):
+    @patch('ansible.template.safe_eval', side_effect=AnsibleError)
+    def test_template_convert_data_template_in_data(self, mock_safe_eval):
         res = self.templar.template('{{bam}}', convert_data=True)
         self.assertTrue(res)
         self.assertEqual(res, 'bar')

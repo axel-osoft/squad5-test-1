@@ -1,4 +1,3 @@
 dependencies:
   - prepare_tests
   - setup_gnutar
-  - setup_remote_tmp_dir

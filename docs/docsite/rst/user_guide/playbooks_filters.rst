@@ -21,9 +21,7 @@ Filters can help you manage missing or undefined variables by providing defaults
 Providing default values
 ------------------------
 
-You can provide default values for variables directly in your templates using the Jinja2 'default' filter. This is often a better approach than failing if a variable is not defined:
-
-.. code-block:: yaml+jinja
+You can provide default values for variables directly in your templates using the Jinja2 'default' filter. This is often a better approach than failing if a variable is not defined::
 
     {{ some_variable | default(5) }}
 
@@ -32,9 +30,7 @@ In the above example, if the variable 'some_variable' is not defined, Ansible us
 Beginning in version 2.8, attempting to access an attribute of an Undefined value in Jinja will return another Undefined value, rather than throwing an error immediately. This means that you can now simply use
 a default with a value in a nested data structure (in other words, :code:`{{ foo.bar.baz | default('DEFAULT') }}`) when you do not know if the intermediate values are defined.
 
-If you want to use the default value when variables evaluate to false or an empty string you have to set the second parameter to ``true``:
-
-.. code-block:: yaml+jinja
+If you want to use the default value when variables evaluate to false or an empty string you have to set the second parameter to ``true``::
 
     {{ lookup('env', 'MY_USER') | default('admin', true) }}
 
@@ -43,9 +39,7 @@ If you want to use the default value when variables evaluate to false or an empt
 Making variables optional
 -------------------------
 
-By default Ansible requires values for all variables in a templated expression. However, you can make specific variables optional. For example, you might want to use a system default for some items and control the value for others. To make a variable optional, set the default value to the special variable ``omit``:
-
-.. code-block:: yaml+jinja
+By default Ansible requires values for all variables in a templated expression. However, you can make specific variables optional. For example, you might want to use a system default for some items and control the value for others. To make a variable optional, set the default value to the special variable ``omit``::
 
     - name: Touch files with an optional mode
       ansible.builtin.file:
@@ -68,9 +62,7 @@ In this example, the default mode for the files ``/tmp/foo`` and ``/tmp/bar`` is
 Defining mandatory values
 -------------------------
 
-If you configure Ansible to ignore undefined variables, you may want to define some values as mandatory. By default, Ansible fails if a variable in your playbook or command is undefined. You can configure Ansible to allow undefined variables by setting :ref:`DEFAULT_UNDEFINED_VAR_BEHAVIOR` to ``false``. In that case, you may want to require some variables to be defined. You can do this with:
-
-.. code-block:: yaml+jinja
+If you configure Ansible to ignore undefined variables, you may want to define some values as mandatory. By default, Ansible fails if a variable in your playbook or command is undefined. You can configure Ansible to allow undefined variables by setting :ref:`DEFAULT_UNDEFINED_VAR_BEHAVIOR` to ``false``. In that case, you may want to require some variables to be defined. You can do this with::
 
     {{ variable | mandatory }}
 
@@ -86,15 +78,11 @@ A convenient way of requiring a variable to be overridden is to give it an undef
 Defining different values for true/false/null (ternary)
 =======================================================
 
-You can create a test, then define one value to use when the test returns true and another when the test returns false (new in version 1.9):
-
-.. code-block:: yaml+jinja
+You can create a test, then define one value to use when the test returns true and another when the test returns false (new in version 1.9)::
 
     {{ (status == 'needs_restart') | ternary('restart', 'continue') }}
 
-In addition, you can define a one value to use on true, one value on false and a third value on null (new in version 2.8):
-
-.. code-block:: yaml+jinja
+In addition, you can define a one value to use on true, one value on false and a third value on null (new in version 2.8)::
 
    {{ enabled | ternary('no shutdown', 'shutdown', omit) }}
 
@@ -108,9 +96,7 @@ Discovering the data type
 
 .. versionadded:: 2.3
 
-If you are unsure of the underlying Python type of a variable, you can use the ``type_debug`` filter to display it. This is useful in debugging when you need a particular type of variable:
-
-.. code-block:: yaml+jinja
+If you are unsure of the underlying Python type of a variable, you can use the ``type_debug`` filter to display it. This is useful in debugging when you need a particular type of variable::
 
     {{ myvar | type_debug }}
 
@@ -123,23 +109,17 @@ Transforming dictionaries into lists
 .. versionadded:: 2.6
 
 
-Use the ``dict2items`` filter to transform a dictionary into a list of items suitable for :ref:`looping <playbooks_loops>`:
-
-.. code-block:: yaml+jinja
+Use the ``dict2items`` filter to transform a dictionary into a list of items suitable for :ref:`looping <playbooks_loops>`::
 
     {{ dict | dict2items }}
 
-Dictionary data (before applying the ``dict2items`` filter):
-
-.. code-block:: yaml
+Dictionary data (before applying the ``dict2items`` filter)::
 
     tags:
       Application: payment
       Environment: dev
 
-List data (after applying the ``dict2items`` filter):
-
-.. code-block:: yaml
+List data (after applying the ``dict2items`` filter)::
 
     - key: Application
       value: payment
@@ -150,23 +130,17 @@ List data (after applying the ``dict2items`` filter):
 
 The ``dict2items`` filter is the reverse of the ``items2dict`` filter.
 
-If you want to configure the names of the keys, the ``dict2items`` filter accepts 2 keyword arguments. Pass the ``key_name`` and ``value_name`` arguments to configure the names of the keys in the list output:
-
-.. code-block:: yaml+jinja
+If you want to configure the names of the keys, the ``dict2items`` filter accepts 2 keyword arguments. Pass the ``key_name`` and ``value_name`` arguments to configure the names of the keys in the list output::
 
     {{ files | dict2items(key_name='file', value_name='path') }}
 
-Dictionary data (before applying the ``dict2items`` filter):
-
-.. code-block:: yaml
+Dictionary data (before applying the ``dict2items`` filter)::
 
     files:
       users: /etc/passwd
       groups: /etc/group
 
-List data (after applying the ``dict2items`` filter):
-
-.. code-block:: yaml
+List data (after applying the ``dict2items`` filter)::
 
     - file: users
       path: /etc/passwd
@@ -179,15 +153,11 @@ Transforming lists into dictionaries
 
 .. versionadded:: 2.7
 
-Use the ``items2dict`` filter to transform a list into a dictionary, mapping the content into ``key: value`` pairs:
-
-.. code-block:: yaml+jinja
+Use the ``items2dict`` filter to transform a list into a dictionary, mapping the content into ``key: value`` pairs::
 
     {{ tags | items2dict }}
 
-List data (before applying the ``items2dict`` filter):
-
-.. code-block:: yaml
+List data (before applying the ``items2dict`` filter)::
 
     tags:
       - key: Application
@@ -195,18 +165,14 @@ List data (before applying the ``items2dict`` filter):
       - key: Environment
         value: dev
 
-Dictionary data (after applying the ``items2dict`` filter):
-
-.. code-block:: text
+Dictionary data (after applying the ``items2dict`` filter)::
 
     Application: payment
     Environment: dev
 
 The ``items2dict`` filter is the reverse of the ``dict2items`` filter.
 
-Not all lists use ``key`` to designate keys and ``value`` to designate values. For example:
-
-.. code-block:: yaml
+Not all lists use ``key`` to designate keys and ``value`` to designate values. For example::
 
     fruits:
       - fruit: apple
@@ -216,9 +182,7 @@ Not all lists use ``key`` to designate keys and ``value`` to designate values. F
       - fruit: grapefruit
         color: yellow
 
-In this example, you must pass the ``key_name`` and ``value_name`` arguments to configure the transformation. For example:
-
-.. code-block:: yaml+jinja
+In this example, you must pass the ``key_name`` and ``value_name`` arguments to configure the transformation. For example::
 
     {{ tags | items2dict(key_name='fruit', value_name='color') }}
 
@@ -227,17 +191,13 @@ If you do not pass these arguments, or do not pass the correct values for your l
 Forcing the data type
 ---------------------
 
-You can cast values as certain types. For example, if you expect the input "True" from a :ref:`vars_prompt <playbooks_prompts>` and you want Ansible to recognize it as a boolean value instead of a string:
+You can cast values as certain types. For example, if you expect the input "True" from a :ref:`vars_prompt <playbooks_prompts>` and you want Ansible to recognize it as a boolean value instead of a string::
 
-.. code-block:: yaml
-
-   - ansible.builtin.debug:
-        msg: test
+   - debug:
+     msg: test
      when: some_string_value | bool
 
-If you want to perform a mathematical comparison on a fact and you want Ansible to recognize it as an integer instead of a string:
-
-.. code-block:: yaml
+If you want to perform a mathematical comparison on a fact and you want Ansible to recognize it as an integer instead of a string::
 
    - shell: echo "only on Red Hat 6, derivatives, and later"
      when: ansible_facts['os_family'] == "RedHat" and ansible_facts['lsb']['major_release'] | int >= 6
@@ -250,47 +210,35 @@ If you want to perform a mathematical comparison on a fact and you want Ansible 
 Formatting data: YAML and JSON
 ==============================
 
-You can switch a data structure in a template from or to JSON or YAML format, with options for formatting, indenting, and loading data. The basic filters are occasionally useful for debugging:
-
-.. code-block:: yaml+jinja
+You can switch a data structure in a template from or to JSON or YAML format, with options for formatting, indenting, and loading data. The basic filters are occasionally useful for debugging::
 
     {{ some_variable | to_json }}
     {{ some_variable | to_yaml }}
 
-For human readable output, you can use:
-
-.. code-block:: yaml+jinja
+For human readable output, you can use::
 
     {{ some_variable | to_nice_json }}
     {{ some_variable | to_nice_yaml }}
 
-You can change the indentation of either format:
-
-.. code-block:: yaml+jinja
+You can change the indentation of either format::
 
     {{ some_variable | to_nice_json(indent=2) }}
     {{ some_variable | to_nice_yaml(indent=8) }}
 
 The ``to_yaml`` and ``to_nice_yaml`` filters use the `PyYAML library`_ which has a default 80 symbol string length limit. That causes unexpected line break after 80th symbol (if there is a space after 80th symbol)
-To avoid such behavior and generate long lines, use the ``width`` option. You must use a hardcoded number to define the width, instead of a construction like ``float("inf")``, because the filter does not support proxying Python functions. For example:
-
-.. code-block:: yaml+jinja
+To avoid such behavior and generate long lines, use the ``width`` option. You must use a hardcoded number to define the width, instead of a construction like ``float("inf")``, because the filter does not support proxying Python functions. For example::
 
     {{ some_variable | to_yaml(indent=8, width=1337) }}
     {{ some_variable | to_nice_yaml(indent=8, width=1337) }}
 
 The filter does support passing through other YAML parameters. For a full list, see the `PyYAML documentation`_.
 
-If you are reading in some already formatted data:
-
-.. code-block:: yaml+jinja
+If you are reading in some already formatted data::
 
     {{ some_variable | from_json }}
     {{ some_variable | from_yaml }}
 
-for example:
-
-.. code-block:: yaml+jinja
+for example::
 
   tasks:
     - name: Register JSON output as a variable
@@ -305,21 +253,15 @@ for example:
 Filter `to_json` and Unicode support
 ------------------------------------
 
-By default `to_json` and `to_nice_json` will convert data received to ASCII, so:
-
-.. code-block:: yaml+jinja
+By default `to_json` and `to_nice_json` will convert data received to ASCII, so::
 
     {{ 'München'| to_json }}
 
-will return:
-
-.. code-block:: text
+will return::
 
     'M\u00fcnchen'
 
-To keep Unicode characters, pass the parameter `ensure_ascii=False` to the filter:
-
-.. code-block:: yaml+jinja
+To keep Unicode characters, pass the parameter `ensure_ascii=False` to the filter::
 
     {{ 'München'| to_json(ensure_ascii=False) }}
 
@@ -330,9 +272,7 @@ To keep Unicode characters, pass the parameter `ensure_ascii=False` to the filte
 To parse multi-document YAML strings, the ``from_yaml_all`` filter is provided.
 The ``from_yaml_all`` filter will return a generator of parsed YAML documents.
 
-for example:
-
-.. code-block:: yaml+jinja
+for example::
 
   tasks:
     - name: Register a file content as a variable
@@ -356,13 +296,11 @@ Combining items from multiple lists: zip and zip_longest
 
 .. versionadded:: 2.3
 
-To get a list combining the elements of other lists use ``zip``:
-
-.. code-block:: yaml+jinja
+To get a list combining the elements of other lists use ``zip``::
 
     - name: Give me list combo of two lists
       ansible.builtin.debug:
-        msg: "{{ [1,2,3,4,5,6] | zip(['a','b','c','d','e','f']) | list }}"
+       msg: "{{ [1,2,3,4,5,6] | zip(['a','b','c','d','e','f']) | list }}"
 
     # => [[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, "e"], [6, "f"]]
 
@@ -372,9 +310,7 @@ To get a list combining the elements of other lists use ``zip``:
 
     # => [[1, "a"], [2, "b"], [3, "c"]]
 
-To always exhaust all lists use ``zip_longest``:
-
-.. code-block:: yaml+jinja
+To always exhaust all lists use ``zip_longest``::
 
     - name: Give me longest combo of three lists , fill with X
       ansible.builtin.debug:
@@ -382,15 +318,11 @@ To always exhaust all lists use ``zip_longest``:
 
     # => [[1, "a", 21], [2, "b", 22], [3, "c", 23], ["X", "d", "X"], ["X", "e", "X"], ["X", "f", "X"]]
 
-Similarly to the output of the ``items2dict`` filter mentioned above, these filters can be used to construct a ``dict``:
-
-.. code-block:: yaml+jinja
+Similarly to the output of the ``items2dict`` filter mentioned above, these filters can be used to construct a ``dict``::
 
     {{ dict(keys_list | zip(values_list)) }}
 
-List data (before applying the ``zip`` filter):
-
-.. code-block:: yaml
+List data (before applying the ``zip`` filter)::
 
     keys_list:
       - one
@@ -399,9 +331,7 @@ List data (before applying the ``zip`` filter):
       - apple
       - orange
 
-Dictionary data (after applying the ``zip`` filter):
-
-.. code-block:: yaml
+Dictionary data (after applying the ``zip`` filter)::
 
     one: apple
     two: orange
@@ -411,15 +341,11 @@ Combining objects and subelements
 
 .. versionadded:: 2.7
 
-The ``subelements`` filter produces a product of an object and the subelement values of that object, similar to the ``subelements`` lookup. This lets you specify individual subelements to use in a template. For example, this expression:
-
-.. code-block:: yaml+jinja
+The ``subelements`` filter produces a product of an object and the subelement values of that object, similar to the ``subelements`` lookup. This lets you specify individual subelements to use in a template. For example, this expression::
 
     {{ users | subelements('groups', skip_missing=True) }}
 
-Data before applying the ``subelements`` filter:
-
-.. code-block:: yaml
+Data before applying the ``subelements`` filter::
 
     users:
     - name: alice
@@ -435,9 +361,7 @@ Data before applying the ``subelements`` filter:
       groups:
       - docker
 
-Data after applying the ``subelements`` filter:
-
-.. code-block:: yaml
+Data after applying the ``subelements`` filter::
 
     -
       - name: alice
@@ -465,9 +389,7 @@ Data after applying the ``subelements`` filter:
         - docker
       - docker
 
-You can use the transformed data with ``loop`` to iterate over the same subelement for multiple objects:
-
-.. code-block:: yaml+jinja
+You can use the transformed data with ``loop`` to iterate over the same subelement for multiple objects::
 
     - name: Set authorized ssh key, extracting just that data from 'users'
       ansible.posix.authorized_key:
@@ -482,21 +404,15 @@ Combining hashes/dictionaries
 
 .. versionadded:: 2.0
 
-The ``combine`` filter allows hashes to be merged. For example, the following would override keys in one hash:
-
-.. code-block:: yaml+jinja
+The ``combine`` filter allows hashes to be merged. For example, the following would override keys in one hash::
 
     {{ {'a':1, 'b':2} | combine({'b':3}) }}
 
-The resulting hash would be:
-
-.. code-block:: text
+The resulting hash would be::
 
     {'a':1, 'b':3}
 
-The filter can also take multiple arguments to merge:
-
-.. code-block:: yaml+jinja
+The filter can also take multiple arguments to merge::
 
     {{ a | combine(b, c, d) }}
     {{ [a, b, c, d] | combine }}
@@ -528,15 +444,11 @@ list_merge
         z: patch
       b: patch
 
-If ``recursive=False`` (the default), nested hash aren't merged:
-
-.. code-block:: yaml+jinja
+If ``recursive=False`` (the default), nested hash aren't merged::
 
     {{ default | combine(patch) }}
 
-This would result in:
-
-.. code-block:: yaml
+This would result in::
 
     a:
       y: patch
@@ -544,15 +456,11 @@ This would result in:
     b: patch
     c: default
 
-If ``recursive=True``, recurse into nested hash and merge their keys:
-
-.. code-block:: yaml+jinja
+If ``recursive=True``, recurse into nested hash and merge their keys::
 
     {{ default | combine(patch, recursive=True) }}
 
-This would result in:
-
-.. code-block:: yaml
+This would result in::
 
     a:
       x: default
@@ -561,9 +469,7 @@ This would result in:
     b: patch
     c: default
 
-If ``list_merge='replace'`` (the default), arrays from the right hash will "replace" the ones in the left hash:
-
-.. code-block:: yaml
+If ``list_merge='replace'`` (the default), arrays from the right hash will "replace" the ones in the left hash::
 
     default:
       a:
@@ -572,61 +478,45 @@ If ``list_merge='replace'`` (the default), arrays from the right hash will "repl
       a:
         - patch
 
-.. code-block:: yaml+jinja
+.. code-block:: jinja
 
     {{ default | combine(patch) }}
 
-This would result in:
-
-.. code-block:: yaml
+This would result in::
 
     a:
       - patch
 
-If ``list_merge='keep'``, arrays from the left hash will be kept:
-
-.. code-block:: yaml+jinja
+If ``list_merge='keep'``, arrays from the left hash will be kept::
 
     {{ default | combine(patch, list_merge='keep') }}
 
-This would result in:
-
-.. code-block:: yaml
+This would result in::
 
     a:
       - default
 
-If ``list_merge='append'``, arrays from the right hash will be appended to the ones in the left hash:
-
-.. code-block:: yaml+jinja
+If ``list_merge='append'``, arrays from the right hash will be appended to the ones in the left hash::
 
     {{ default | combine(patch, list_merge='append') }}
 
-This would result in:
-
-.. code-block:: yaml
+This would result in::
 
     a:
       - default
       - patch
 
-If ``list_merge='prepend'``, arrays from the right hash will be prepended to the ones in the left hash:
-
-.. code-block:: yaml+jinja
+If ``list_merge='prepend'``, arrays from the right hash will be prepended to the ones in the left hash::
 
     {{ default | combine(patch, list_merge='prepend') }}
 
-This would result in:
-
-.. code-block:: yaml
+This would result in::
 
     a:
       - patch
       - default
 
-If ``list_merge='append_rp'``, arrays from the right hash will be appended to the ones in the left hash. Elements of arrays in the left hash that are also in the corresponding array of the right hash will be removed ("rp" stands for "remove present"). Duplicate elements that aren't in both hashes are kept:
-
-.. code-block:: yaml
+If ``list_merge='append_rp'``, arrays from the right hash will be appended to the ones in the left hash. Elements of arrays in the left hash that are also in the corresponding array of the right hash will be removed ("rp" stands for "remove present"). Duplicate elements that aren't in both hashes are kept::
 
     default:
       a:
@@ -641,13 +531,11 @@ If ``list_merge='append_rp'``, arrays from the right hash will be appended to th
         - 5
         - 5
 
-.. code-block:: yaml+jinja
+.. code-block:: jinja
 
     {{ default | combine(patch, list_merge='append_rp') }}
 
-This would result in:
-
-.. code-block:: yaml
+This would result in::
 
     a:
       - 1
@@ -658,15 +546,11 @@ This would result in:
       - 5
       - 5
 
-If ``list_merge='prepend_rp'``, the behavior is similar to the one for ``append_rp``, but elements of arrays in the right hash are prepended:
-
-.. code-block:: yaml+jinja
+If ``list_merge='prepend_rp'``, the behavior is similar to the one for ``append_rp``, but elements of arrays in the right hash are prepended::
 
     {{ default | combine(patch, list_merge='prepend_rp') }}
 
-This would result in:
-
-.. code-block:: yaml
+This would result in::
 
     a:
       - 3
@@ -677,9 +561,7 @@ This would result in:
       - 1
       - 2
 
-``recursive`` and ``list_merge`` can be used together:
-
-.. code-block:: yaml
+``recursive`` and ``list_merge`` can be used together::
 
     default:
       a:
@@ -706,13 +588,11 @@ This would result in:
         - 4
         - key: value
 
-.. code-block:: yaml+jinja
+.. code-block:: jinja
 
     {{ default | combine(patch, recursive=True, list_merge='append_rp') }}
 
-This would result in:
-
-.. code-block:: yaml
+This would result in::
 
     a:
       a':
@@ -739,31 +619,23 @@ Selecting values from arrays or hashtables
 
 .. versionadded:: 2.1
 
-The `extract` filter is used to map from a list of indices to a list of values from a container (hash or array):
-
-.. code-block:: yaml+jinja
+The `extract` filter is used to map from a list of indices to a list of values from a container (hash or array)::
 
     {{ [0,2] | map('extract', ['x','y','z']) | list }}
     {{ ['x','y'] | map('extract', {'x': 42, 'y': 31}) | list }}
 
-The results of the above expressions would be:
-
-.. code-block:: none
+The results of the above expressions would be::
 
     ['x', 'z']
     [42, 31]
 
-The filter can take another argument:
-
-.. code-block:: yaml+jinja
+The filter can take another argument::
 
     {{ groups['x'] | map('extract', hostvars, 'ec2_ip_address') | list }}
 
 This takes the list of hosts in group 'x', looks them up in `hostvars`, and then looks up the `ec2_ip_address` of the result. The final result is a list of IP addresses for the hosts in group 'x'.
 
-The third argument to the filter can also be a list, for a recursive lookup inside the container:
-
-.. code-block:: yaml+jinja
+The third argument to the filter can also be a list, for a recursive lookup inside the container::
 
     {{ ['a'] | map('extract', b, ['x','y']) | list }}
 
@@ -777,9 +649,7 @@ This set of filters returns a list of combined lists.
 
 permutations
 ^^^^^^^^^^^^
-To get permutations of a list:
-
-.. code-block:: yaml+jinja
+To get permutations of a list::
 
     - name: Give me largest permutations (order matters)
       ansible.builtin.debug:
@@ -791,9 +661,7 @@ To get permutations of a list:
 
 combinations
 ^^^^^^^^^^^^
-Combinations always require a set size:
-
-.. code-block:: yaml+jinja
+Combinations always require a set size::
 
     - name: Give me combinations for sets of two
       ansible.builtin.debug:
@@ -805,17 +673,13 @@ products
 ^^^^^^^^
 The product filter returns the `cartesian product <https://docs.python.org/3/library/itertools.html#itertools.product>`_ of the input iterables. This is roughly equivalent to nested for-loops in a generator expression.
 
-For example:
-
-.. code-block:: yaml+jinja
+For example::
 
   - name: Generate multiple hostnames
     ansible.builtin.debug:
       msg: "{{ ['foo', 'bar'] | product(['com']) | map('join', '.') | join(',') }}"
 
-This would result in:
-
-.. code-block:: json
+This would result in::
 
     { "msg": "foo.com,bar.com" }
 
@@ -833,9 +697,7 @@ To select a single element or a data subset from a complex data structure in JSO
 
 .. note:: You must manually install the **jmespath** dependency on the Ansible controller before using this filter. This filter is built upon **jmespath**, and you can use the same syntax. For examples, see `jmespath examples <https://jmespath.org/examples.html>`_.
 
-Consider this data structure:
-
-.. code-block:: json
+Consider this data structure::
 
     {
         "domain_definition": {
@@ -884,27 +746,21 @@ Consider this data structure:
         }
     }
 
-To extract all clusters from this structure, you can use the following query:
-
-.. code-block:: yaml+jinja
+To extract all clusters from this structure, you can use the following query::
 
     - name: Display all cluster names
       ansible.builtin.debug:
         var: item
       loop: "{{ domain_definition | community.general.json_query('domain.cluster[*].name') }}"
 
-To extract all server names:
-
-.. code-block:: yaml+jinja
+To extract all server names::
 
     - name: Display all server names
       ansible.builtin.debug:
         var: item
       loop: "{{ domain_definition | community.general.json_query('domain.server[*].name') }}"
 
-To extract ports from cluster1:
-
-.. code-block:: yaml+jinja
+To extract ports from cluster1::
 
     - name: Display all ports from cluster1
       ansible.builtin.debug:
@@ -915,9 +771,7 @@ To extract ports from cluster1:
 
 .. note:: You can use a variable to make the query more readable.
 
-To print out the ports from cluster1 in a comma separated string:
-
-.. code-block:: yaml+jinja
+To print out the ports from cluster1 in a comma separated string::
 
     - name: Display all ports from cluster1 as a string
       ansible.builtin.debug:
@@ -925,9 +779,7 @@ To print out the ports from cluster1 in a comma separated string:
 
 .. note:: In the example above, quoting literals using backticks avoids escaping quotes and maintains readability.
 
-You can use YAML `single quote escaping <https://yaml.org/spec/current.html#id2534365>`_:
-
-.. code-block:: yaml+jinja
+You can use YAML `single quote escaping <https://yaml.org/spec/current.html#id2534365>`_::
 
     - name: Display all ports from cluster1
       ansible.builtin.debug:
@@ -936,9 +788,7 @@ You can use YAML `single quote escaping <https://yaml.org/spec/current.html#id25
 
 .. note:: Escaping single quotes within single quotes in YAML is done by doubling the single quote.
 
-To get a hash map with all ports and names of a cluster:
-
-.. code-block:: yaml+jinja
+To get a hash map with all ports and names of a cluster::
 
     - name: Display all server ports and names from cluster1
       ansible.builtin.debug:
@@ -947,9 +797,7 @@ To get a hash map with all ports and names of a cluster:
       vars:
         server_name_cluster1_query: "domain.server[?cluster=='cluster2'].{name: name, port: port}"
 
-To extract ports from all clusters with name starting with 'server1':
-
-.. code-block:: yaml+jinja
+To extract ports from all clusters with name starting with 'server1'::
 
     - name: Display all ports from cluster1
       ansible.builtin.debug:
@@ -957,9 +805,7 @@ To extract ports from all clusters with name starting with 'server1':
       vars:
         server_name_query: "domain.server[?starts_with(name,'server1')].port"
 
-To extract ports from all clusters with name containing 'server1':
-
-.. code-block:: yaml+jinja
+To extract ports from all clusters with name containing 'server1'::
 
     - name: Display all ports from cluster1
       ansible.builtin.debug:
@@ -989,9 +835,7 @@ This filter can be used to generate a random MAC address from a string prefix.
 
 	This filter has migrated to the `community.general <https://galaxy.ansible.com/community/general>`_ collection. Follow the installation instructions to install that collection.
 
-To get a random MAC address from a string prefix starting with '52:54:00':
-
-.. code-block:: yaml+jinja
+To get a random MAC address from a string prefix starting with '52:54:00'::
 
     "{{ '52:54:00' | community.general.random_mac }}"
     # => '52:54:00:ef:1c:03'
@@ -1000,9 +844,7 @@ Note that if anything is wrong with the prefix string, the filter will issue an 
 
  .. versionadded:: 2.9
 
-As of Ansible version 2.9, you can also initialize the random number generator from a seed to create random-but-idempotent MAC addresses:
-
-.. code-block:: yaml+jinja
+As of Ansible version 2.9, you can also initialize the random number generator from a seed to create random-but-idempotent MAC addresses::
 
     "{{ '52:54:00' | community.general.random_mac(seed=inventory_hostname) }}"
 
@@ -1014,39 +856,29 @@ Random items or numbers
 
 The ``random`` filter in Ansible is an extension of the default Jinja2 random filter, and can be used to return a random item from a sequence of items or to generate a random number based on a range.
 
-To get a random item from a list:
-
-.. code-block:: yaml+jinja
+To get a random item from a list::
 
     "{{ ['a','b','c'] | random }}"
     # => 'c'
 
-To get a random number between 0 (inclusive) and a specified integer (exclusive):
-
-.. code-block:: yaml+jinja
+To get a random number between 0 (inclusive) and a specified integer (exclusive)::
 
     "{{ 60 | random }} * * * * root /script/from/cron"
     # => '21 * * * * root /script/from/cron'
 
-To get a random number from 0 to 100 but in steps of 10:
-
-.. code-block:: yaml+jinja
+To get a random number from 0 to 100 but in steps of 10::
 
     {{ 101 | random(step=10) }}
     # => 70
 
-To get a random number from 1 to 100 but in steps of 10:
-
-.. code-block:: yaml+jinja
+To get a random number from 1 to 100 but in steps of 10::
 
     {{ 101 | random(1, 10) }}
     # => 31
     {{ 101 | random(start=1, step=10) }}
     # => 51
 
-You can initialize the random number generator from a seed to create random-but-idempotent numbers:
-
-.. code-block:: yaml+jinja
+You can initialize the random number generator from a seed to create random-but-idempotent numbers::
 
     "{{ 60 | random(seed=inventory_hostname) }} * * * * root /script/from/cron"
 
@@ -1055,18 +887,14 @@ Shuffling a list
 
 The ``shuffle`` filter randomizes an existing list, giving a different order every invocation.
 
-To get a random list from an existing  list:
-
-.. code-block:: yaml+jinja
+To get a random list from an existing  list::
 
     {{ ['a','b','c'] | shuffle }}
     # => ['c','a','b']
     {{ ['a','b','c'] | shuffle }}
     # => ['b','c','a']
 
-You can initialize the shuffle generator from a seed to generate a random-but-idempotent order:
-
-.. code-block:: yaml+jinja
+You can initialize the shuffle generator from a seed to generate a random-but-idempotent order::
 
     {{ ['a','b','c'] | shuffle(seed=inventory_hostname) }}
     # => ['b','a','c']
@@ -1081,46 +909,34 @@ Managing list variables
 
 You can search for the minimum or maximum value in a list, or flatten a multi-level list.
 
-To get the minimum value from list of numbers:
-
-.. code-block:: yaml+jinja
+To get the minimum value from list of numbers::
 
     {{ list1 | min }}
 
 .. versionadded:: 2.11
 
-To get the minimum value in a list of objects:
-
-.. code-block:: yaml+jinja
+To get the minimum value in a list of objects::
 
     {{ [{'val': 1}, {'val': 2}] | min(attribute='val') }}
 
-To get the maximum value from a list of numbers:
-
-.. code-block:: yaml+jinja
+To get the maximum value from a list of numbers::
 
     {{ [3, 4, 2] | max }}
 
 .. versionadded:: 2.11
 
-To get the maximum value in a list of objects:
-
-.. code-block:: yaml+jinja
+To get the maximum value in a list of objects::
 
     {{ [{'val': 1}, {'val': 2}] | max(attribute='val') }}
 
 .. versionadded:: 2.5
 
-Flatten a list (same thing the `flatten` lookup does):
-
-.. code-block:: yaml+jinja
+Flatten a list (same thing the `flatten` lookup does)::
 
     {{ [3, [4, 2] ] | flatten }}
     # => [3, 4, 2]
 
-Flatten only the first level of a list (akin to the `items` lookup):
-
-.. code-block:: yaml+jinja
+Flatten only the first level of a list (akin to the `items` lookup)::
 
     {{ [3, [4, [2]] ] | flatten(levels=1) }}
     # => [3, 4, [2]]
@@ -1128,9 +944,7 @@ Flatten only the first level of a list (akin to the `items` lookup):
 
 .. versionadded:: 2.11
 
-Preserve nulls in a list, by default flatten removes them. :
-
-.. code-block:: yaml+jinja
+Preserve nulls in a list, by default flatten removes them. ::
 
     {{ [3, None, [4, [2]] ] | flatten(levels=1, skip_nulls=False) }}
     # => [3, None, 4, [2]]
@@ -1145,44 +959,34 @@ You can select or combine items from sets or lists.
 
 .. versionadded:: 1.4
 
-To get a unique set from a list:
-
-.. code-block:: yaml+jinja
+To get a unique set from a list::
 
     # list1: [1, 2, 5, 1, 3, 4, 10]
     {{ list1 | unique }}
     # => [1, 2, 5, 3, 4, 10]
 
-To get a union of two lists:
-
-.. code-block:: yaml+jinja
+To get a union of two lists::
 
     # list1: [1, 2, 5, 1, 3, 4, 10]
     # list2: [1, 2, 3, 4, 5, 11, 99]
     {{ list1 | union(list2) }}
     # => [1, 2, 5, 1, 3, 4, 10, 11, 99]
 
-To get the intersection of 2 lists (unique list of all items in both):
-
-.. code-block:: yaml+jinja
+To get the intersection of 2 lists (unique list of all items in both)::
 
     # list1: [1, 2, 5, 3, 4, 10]
     # list2: [1, 2, 3, 4, 5, 11, 99]
     {{ list1 | intersect(list2) }}
     # => [1, 2, 5, 3, 4]
 
-To get the difference of 2 lists (items in 1 that don't exist in 2):
-
-.. code-block:: yaml+jinja
+To get the difference of 2 lists (items in 1 that don't exist in 2)::
 
     # list1: [1, 2, 5, 1, 3, 4, 10]
     # list2: [1, 2, 3, 4, 5, 11, 99]
     {{ list1 | difference(list2) }}
     # => [10]
 
-To get the symmetric difference of 2 lists (items exclusive to each list):
-
-.. code-block:: yaml+jinja
+To get the symmetric difference of 2 lists (items exclusive to each list)::
 
     # list1: [1, 2, 5, 1, 3, 4, 10]
     # list2: [1, 2, 3, 4, 5, 11, 99]
@@ -1198,30 +1002,22 @@ Calculating numbers (math)
 
 You can calculate logs, powers, and roots of numbers with Ansible filters. Jinja2 provides other mathematical functions like abs() and round().
 
-Get the logarithm (default is e):
-
-.. code-block:: yaml+jinja
+Get the logarithm (default is e)::
 
     {{ 8 | log }}
     # => 2.0794415416798357
 
-Get the base 10 logarithm:
-
-.. code-block:: yaml+jinja
+Get the base 10 logarithm::
 
     {{ 8 | log(10) }}
     # => 0.9030899869919435
 
-Give me the power of 2! (or 5):
-
-.. code-block:: yaml+jinja
+Give me the power of 2! (or 5)::
 
     {{ 8 | pow(5) }}
     # => 32768.0
 
-Square root, or the 5th:
-
-.. code-block:: yaml+jinja
+Square root, or the 5th::
 
     {{ 8 | root }}
     # => 2.8284271247461903
@@ -1246,23 +1042,17 @@ IP address filters
 
 .. versionadded:: 1.9
 
-To test if a string is a valid IP address:
-
-.. code-block:: yaml+jinja
+To test if a string is a valid IP address::
 
   {{ myvar | ansible.netcommon.ipaddr }}
 
-You can also require a specific IP protocol version:
-
-.. code-block:: yaml+jinja
+You can also require a specific IP protocol version::
 
   {{ myvar | ansible.netcommon.ipv4 }}
   {{ myvar | ansible.netcommon.ipv6 }}
 
 IP address filter can also be used to extract specific information from an IP
-address. For example, to get the IP address itself from a CIDR, you can use:
-
-.. code-block:: yaml+jinja
+address. For example, to get the IP address itself from a CIDR, you can use::
 
   {{ '192.0.2.1/24' | ansible.netcommon.ipaddr('address') }}
   # => 192.168.0.1
@@ -1278,9 +1068,7 @@ Network CLI filters
 .. versionadded:: 2.4
 
 To convert the output of a network device CLI command into structured JSON
-output, use the ``parse_cli`` filter:
-
-.. code-block:: yaml+jinja
+output, use the ``parse_cli`` filter::
 
     {{ output | ansible.netcommon.parse_cli('path/to/spec') }}
 
@@ -1364,9 +1152,7 @@ hashes.
 
 The network filters also support parsing the output of a CLI command using the
 TextFSM library.  To parse the CLI output with TextFSM use the following
-filter:
-
-.. code-block:: yaml+jinja
+filter::
 
   {{ output.stdout[0] | ansible.netcommon.parse_cli_textfsm('path/to/fsm') }}
 
@@ -1378,9 +1164,7 @@ Network XML filters
 .. versionadded:: 2.5
 
 To convert the XML output of a network device command into structured JSON
-output, use the ``parse_xml`` filter:
-
-.. code-block:: yaml+jinja
+output, use the ``parse_xml`` filter::
 
   {{ output | ansible.netcommon.parse_xml('path/to/spec') }}
 
@@ -1458,9 +1242,7 @@ For example, the ``vlan_id`` in the spec file is a user defined name and its val
 relative to the value of XPath in ``top``
 
 Attributes of XML tags can be extracted using XPath expressions. The value of ``state`` in the spec
-is an XPath expression used to get the attributes of the ``vlan`` tag in output XML.:
-
-.. code-block:: none
+is an XPath expression used to get the attributes of the ``vlan`` tag in output XML.::
 
     <rpc-reply>
       <configuration>
@@ -1490,22 +1272,16 @@ sorted string list of integers according to IOS-like VLAN list rules. This list 
 * The first line of the list can be first_line_len characters long.
 * Subsequent list lines can be other_line_len characters.
 
-To sort a VLAN list:
-
-.. code-block:: yaml+jinja
+To sort a VLAN list::
 
     {{ [3003, 3004, 3005, 100, 1688, 3002, 3999] | ansible.netcommon.vlan_parser }}
 
-This example renders the following sorted list:
-
-.. code-block:: text
+This example renders the following sorted list::
 
     ['100,1688,3002-3005,3999']
 
 
-Another example Jinja template:
-
-.. code-block:: yaml+jinja
+Another example Jinja template::
 
     {% set parsed_vlans = vlans | ansible.netcommon.vlan_parser %}
     switchport trunk allowed vlan {{ parsed_vlans[0] }}
@@ -1518,55 +1294,41 @@ This allows for dynamic generation of VLAN lists on a Cisco IOS tagged interface
 
 .. _hash_filters:
 
-Hashing and encrypting strings and passwords
-==============================================
+Encrypting and checksumming strings and passwords
+=================================================
 
 .. versionadded:: 1.9
 
-To get the sha1 hash of a string:
-
-.. code-block:: yaml+jinja
+To get the sha1 hash of a string::
 
     {{ 'test1' | hash('sha1') }}
     # => "b444ac06613fc8d63795be9ad0beaf55011936ac"
 
-To get the md5 hash of a string:
-
-.. code-block:: yaml+jinja
+To get the md5 hash of a string::
 
     {{ 'test1' | hash('md5') }}
     # => "5a105e8b9d40e1329780d62ea2265d8a"
 
-Get a string checksum:
-
-.. code-block:: yaml+jinja
+Get a string checksum::
 
     {{ 'test2' | checksum }}
     # => "109f4b3c50d7b0df729d299bc6f8e9ef9066971f"
 
-Other hashes (platform dependent):
-
-.. code-block:: yaml+jinja
+Other hashes (platform dependent)::
 
     {{ 'test2' | hash('blowfish') }}
 
-To get a sha512 password hash (random salt):
-
-.. code-block:: yaml+jinja
+To get a sha512 password hash (random salt)::
 
     {{ 'passwordsaresecret' | password_hash('sha512') }}
     # => "$6$UIv3676O/ilZzWEE$ktEfFF19NQPF2zyxqxGkAceTnbEgpEKuGBtk6MlU4v2ZorWaVQUMyurgmHCh2Fr4wpmQ/Y.AlXMJkRnIS4RfH/"
 
-To get a sha256 password hash with a specific salt:
-
-.. code-block:: yaml+jinja
+To get a sha256 password hash with a specific salt::
 
     {{ 'secretpassword' | password_hash('sha256', 'mysecretsalt') }}
     # => "$5$mysecretsalt$ReKNyDYjkKNqRVwouShhsEqZ3VOE8eoVO4exihOfvG4"
 
-An idempotent method to generate unique hashes per system is to use a salt that is consistent between runs:
-
-.. code-block:: yaml+jinja
+An idempotent method to generate unique hashes per system is to use a salt that is consistent between runs::
 
     {{ 'secretpassword' | password_hash('sha512', 65534 | random(seed=inventory_hostname) | string) }}
     # => "$6$43927$lQxPKz2M2X.NWO.gK.t7phLwOKQMcSq72XxDZQ0XzYV6DlL1OD72h417aj16OnHTGxNzhftXJQBcjbunLEepM0"
@@ -1575,16 +1337,14 @@ Hash types available depend on the control system running Ansible, 'hash' depend
 
 .. versionadded:: 2.7
 
-Some hash types allow providing a rounds parameter:
-
-.. code-block:: yaml+jinja
+Some hash types allow providing a rounds parameter::
 
     {{ 'secretpassword' | password_hash('sha256', 'mysecretsalt', rounds=10000) }}
     # => "$5$rounds=10000$mysecretsalt$Tkm80llAxD4YHll6AgNIztKn0vzAACsuuEfYeGP7tm7"
 
 Hash type 'blowfish' (BCrypt) provides the facility to specify the version of the BCrypt algorithm
 
-.. code-block:: yaml+jinja
+.. code-block:: jinja
 
     {{ 'secretpassword' | password_hash('blowfish', '1234567890123456789012', ident='2b') }}
     # => "$2b$12$123456789012345678901uuJ4qFdej6xnWjOQT.FStqfdoY8dYUPC"
@@ -1596,9 +1356,7 @@ Hash type 'blowfish' (BCrypt) provides the facility to specify the version of th
 
 .. versionadded:: 2.12
 
-You can also use the Ansible :ref:`vault <vault>` filter to encrypt data:
-
-.. code-block:: yaml+jinja
+You can also use the Ansible :ref:`vault <vault>` filter to encrypt data::
 
   # simply encrypt my key in a vault
   vars:
@@ -1611,9 +1369,7 @@ You can also use the Ansible :ref:`vault <vault>` filter to encrypt data:
       template_data: '{{ secretdata|vault(vaultsecret, salt=mysalt) }}'
 
 
-And then decrypt it using the unvault filter:
-
-.. code-block:: yaml+jinja
+And then decrypt it using the unvault filter::
 
   # simply decrypt my key from a vault
   vars:
@@ -1637,9 +1393,7 @@ Several filters work with text, including URLs, file names, and path names.
 Adding comments to files
 ------------------------
 
-The ``comment`` filter lets you create comments in a file from text in a template, with a variety of comment styles. By default Ansible uses ``#`` to start a comment line and adds a blank comment line above and below your comment text. For example the following:
-
-.. code-block:: yaml+jinja
+The ``comment`` filter lets you create comments in a file from text in a template, with a variety of comment styles. By default Ansible uses ``#`` to start a comment line and adds a blank comment line above and below your comment text. For example the following::
 
     {{ "Plain style (default)" | comment }}
 
@@ -1652,18 +1406,14 @@ produces this output:
     #
 
 Ansible offers styles for comments in C (``//...``), C block
-(``/*...*/``), Erlang (``%...``) and XML (``<!--...-->``):
-
-.. code-block:: yaml+jinja
+(``/*...*/``), Erlang (``%...``) and XML (``<!--...-->``)::
 
     {{ "C style" | comment('c') }}
     {{ "C block style" | comment('cblock') }}
     {{ "Erlang style" | comment('erlang') }}
     {{ "XML style" | comment('xml') }}
 
-You can define a custom comment character. This filter:
-
-.. code-block:: yaml+jinja
+You can define a custom comment character. This filter::
 
   {{ "My Special Case" | comment(decoration="! ") }}
 
@@ -1675,9 +1425,7 @@ produces:
   ! My Special Case
   !
 
-You can fully customize the comment style:
-
-.. code-block:: yaml+jinja
+You can fully customize the comment style::
 
     {{ "Custom style" | comment('plain', prefix='#######\n#', postfix='#\n#######\n   ###\n    #') }}
 
@@ -1697,7 +1445,7 @@ The filter can also be applied to any Ansible variable. For example to
 make the output of the ``ansible_managed`` variable more readable, we can
 change the definition in the ``ansible.cfg`` file to this:
 
-.. code-block:: ini
+.. code-block:: jinja
 
     [defaults]
 
@@ -1707,9 +1455,7 @@ change the definition in the ``ansible.cfg`` file to this:
       user: {uid}
       host: {host}
 
-and then use the variable with the `comment` filter:
-
-.. code-block:: yaml+jinja
+and then use the variable with the `comment` filter::
 
     {{ ansible_managed | comment }}
 
@@ -1729,9 +1475,7 @@ which produces this output:
 URLEncode Variables
 -------------------
 
-The ``urlencode`` filter quotes data for use in a URL path or query using UTF-8:
-
-.. code-block:: yaml+jinja
+The ``urlencode`` filter quotes data for use in a URL path or query using UTF-8::
 
     {{ 'Trollhättan' | urlencode }}
     # => 'Trollh%C3%A4ttan'
@@ -1741,9 +1485,7 @@ Splitting URLs
 
 .. versionadded:: 2.4
 
-The ``urlsplit`` filter extracts the fragment, hostname, netloc, password, path, port, query, scheme, and username from an URL. With no arguments, returns a dictionary of all the fields:
-
-.. code-block:: yaml+jinja
+The ``urlsplit`` filter extracts the fragment, hostname, netloc, password, path, port, query, scheme, and username from an URL. With no arguments, returns a dictionary of all the fields::
 
     {{ "http://user:password@www.acme.com:9000/dir/index.html?query=term#fragment" | urlsplit('hostname') }}
     # => 'www.acme.com'
@@ -1789,9 +1531,7 @@ The ``urlsplit`` filter extracts the fragment, hostname, netloc, password, path,
 Searching strings with regular expressions
 ------------------------------------------
 
-To search in a string or extract parts of a string with a regular expression, use the ``regex_search`` filter:
-
-.. code-block:: yaml+jinja
+To search in a string or extract parts of a string with a regular expression, use the ``regex_search`` filter::
 
     # Extracts the database name from a string
     {{ 'server1/database42' | regex_search('database[0-9]+') }}
@@ -1809,16 +1549,12 @@ To search in a string or extract parts of a string with a regular expression, us
     {{ '21/42' | regex_search('(?P<dividend>[0-9]+)/(?P<divisor>[0-9]+)', '\\g<dividend>', '\\g<divisor>') }}
     # => ['21', '42']
 
-The ``regex_search`` filter returns an empty string if it cannot find a match:
-
-.. code-block:: yaml+jinja
+The ``regex_search`` filter returns an empty string if it cannot find a match::
 
     {{ 'ansible' | regex_search('foobar') }}
     # => ''
 
-Note that due to historic behavior and custom re-implementation of some of the Jinja internals in Ansible there is an exception to the behavior. When used in a Jinja expression (for example in conjunction with operators, other filters, and so on) the return value differs, in those situations the return value is ``none``. See the two examples below:
-
-.. code-block:: yaml+jinja
+Note that due to historic behavior and custom re-implementation of some of the Jinja internals in Ansible there is an exception to the behavior. When used in a Jinja expression (for example in conjunction with operators, other filters, and so on) the return value differs, in those situations the return value is ``none``. See the two examples below::
 
     {{ 'ansible' | regex_search('foobar') == '' }}
     # => False
@@ -1827,9 +1563,7 @@ Note that due to historic behavior and custom re-implementation of some of the J
 
 When ``jinja2_native`` setting is enabled, the ``regex_search`` filter always returns ``none`` if it cannot find a match.
 
-To extract all occurrences of regex matches in a string, use the ``regex_findall`` filter:
-
-.. code-block:: yaml+jinja
+To extract all occurrences of regex matches in a string, use the ``regex_findall`` filter::
 
     # Returns a list of all IPv4 addresses in the string
     {{ 'Some DNS servers are 8.8.8.8 and 8.8.4.4' | regex_findall('\\b(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\b') }}
@@ -1840,9 +1574,7 @@ To extract all occurrences of regex matches in a string, use the ``regex_findall
     # => ['CAR', 'tar', 'bar']
 
 
-To replace text in a string with regex, use the ``regex_replace`` filter:
-
-.. code-block:: yaml+jinja
+To replace text in a string with regex, use the ``regex_replace`` filter::
 
     # Convert "ansible" to "able"
     {{ 'ansible' | regex_replace('^a.*i(.*)$', 'a\\1') }}
@@ -1865,9 +1597,7 @@ To replace text in a string with regex, use the ``regex_replace`` filter:
     # => '#CAR\n#tar\nfoo\n#bar\n'
 
 .. note::
-   If you want to match the whole string and you are using ``*`` make sure to always wraparound your regular expression with the start/end anchors. For example ``^(.*)$`` will always match only one result, while ``(.*)`` on some Python versions will match the whole string and an empty string at the end, which means it will make two replacements:
-
-.. code-block:: yaml+jinja
+   If you want to match the whole string and you are using ``*`` make sure to always wraparound your regular expression with the start/end anchors. For example ``^(.*)$`` will always match only one result, while ``(.*)`` on some Python versions will match the whole string and an empty string at the end, which means it will make two replacements::
 
       # add "https://" prefix to each item in a list
       GOOD:
@@ -1892,18 +1622,14 @@ To replace text in a string with regex, use the ``regex_replace`` filter:
 
 .. versionadded:: 2.0
 
-To escape special characters within a standard Python regex, use the ``regex_escape`` filter (using the default ``re_type='python'`` option):
-
-.. code-block:: yaml+jinja
+To escape special characters within a standard Python regex, use the ``regex_escape`` filter (using the default ``re_type='python'`` option)::
 
     # convert '^f.*o(.*)$' to '\^f\.\*o\(\.\*\)\$'
     {{ '^f.*o(.*)$' | regex_escape() }}
 
 .. versionadded:: 2.8
 
-To escape special characters within a POSIX basic regex, use the ``regex_escape`` filter with the ``re_type='posix_basic'`` option:
-
-.. code-block:: yaml+jinja
+To escape special characters within a POSIX basic regex, use the ``regex_escape`` filter with the ``re_type='posix_basic'`` option::
 
     # convert '^f.*o(.*)$' to '\^f\.\*o(\.\*)\$'
     {{ '^f.*o(.*)$' | regex_escape('posix_basic') }}
@@ -1912,57 +1638,39 @@ To escape special characters within a POSIX basic regex, use the ``regex_escape`
 Managing file names and path names
 ----------------------------------
 
-To get the last name of a file path, like 'foo.txt' out of '/etc/asdf/foo.txt':
-
-.. code-block:: yaml+jinja
+To get the last name of a file path, like 'foo.txt' out of '/etc/asdf/foo.txt'::
 
     {{ path | basename }}
 
-To get the last name of a windows style file path (new in version 2.0):
-
-.. code-block:: yaml+jinja
+To get the last name of a windows style file path (new in version 2.0)::
 
     {{ path | win_basename }}
 
-To separate the windows drive letter from the rest of a file path (new in version 2.0):
-
-.. code-block:: yaml+jinja
+To separate the windows drive letter from the rest of a file path (new in version 2.0)::
 
     {{ path | win_splitdrive }}
 
-To get only the windows drive letter:
-
-.. code-block:: yaml+jinja
+To get only the windows drive letter::
 
     {{ path | win_splitdrive | first }}
 
-To get the rest of the path without the drive letter:
-
-.. code-block:: yaml+jinja
+To get the rest of the path without the drive letter::
 
     {{ path | win_splitdrive | last }}
 
-To get the directory from a path:
-
-.. code-block:: yaml+jinja
+To get the directory from a path::
 
     {{ path | dirname }}
 
-To get the directory from a windows path (new version 2.0):
-
-.. code-block:: yaml+jinja
+To get the directory from a windows path (new version 2.0)::
 
     {{ path | win_dirname }}
 
-To expand a path containing a tilde (`~`) character (new in version 1.5):
-
-.. code-block:: yaml+jinja
+To expand a path containing a tilde (`~`) character (new in version 1.5)::
 
     {{ path | expanduser }}
 
-To expand a path containing environment variables:
-
-.. code-block:: yaml+jinja
+To expand a path containing environment variables::
 
     {{ path | expandvars }}
 
@@ -1970,28 +1678,20 @@ To expand a path containing environment variables:
 
 .. versionadded:: 2.6
 
-To get the real path of a link (new in version 1.8):
-
-.. code-block:: yaml+jinja
+To get the real path of a link (new in version 1.8)::
 
     {{ path | realpath }}
 
-To get the relative path of a link, from a start point (new in version 1.7):
-
-.. code-block:: yaml+jinja
+To get the relative path of a link, from a start point (new in version 1.7)::
 
     {{ path | relpath('/etc') }}
 
-To get the root and extension of a path or file name (new in version 2.0):
-
-.. code-block:: yaml+jinja
+To get the root and extension of a path or file name (new in version 2.0)::
 
     # with path == 'nginx.conf' the return would be ('nginx', '.conf')
     {{ path | splitext }}
 
-The ``splitext`` filter always returns a pair of strings. The individual components can be accessed by using the ``first`` and ``last`` filters:
-
-.. code-block:: yaml+jinja
+The ``splitext`` filter always returns a pair of strings. The individual components can be accessed by using the ``first`` and ``last`` filters::
 
     # with path == 'nginx.conf' the return would be 'nginx'
     {{ path | splitext | first }}
@@ -1999,9 +1699,7 @@ The ``splitext`` filter always returns a pair of strings. The individual compone
     # with path == 'nginx.conf' the return would be '.conf'
     {{ path | splitext | last }}
 
-To join one or more path components:
-
-.. code-block:: yaml+jinja
+To join one or more path components::
 
     {{ ('/etc', path, 'subdir', file) | path_join }}
 
@@ -2010,37 +1708,27 @@ To join one or more path components:
 Manipulating strings
 ====================
 
-To add quotes for shell usage:
-
-.. code-block:: yaml+jinja
+To add quotes for shell usage::
 
     - name: Run a shell command
       ansible.builtin.shell: echo {{ string_value | quote }}
 
-To concatenate a list into a string:
-
-.. code-block:: yaml+jinja
+To concatenate a list into a string::
 
     {{ list | join(" ") }}
 
-To split a string into a list:
-
-.. code-block:: yaml+jinja
+To split a string into a list::
 
     {{ csv_string | split(",") }}
     
 .. versionadded:: 2.11
 
-To work with Base64 encoded strings:
-
-.. code-block:: yaml+jinja
+To work with Base64 encoded strings::
 
     {{ encoded | b64decode }}
     {{ decoded | string | b64encode }}
 
-As of version 2.6, you can define the type of encoding to use, the default is ``utf-8``:
-
-.. code-block:: yaml+jinja
+As of version 2.6, you can define the type of encoding to use, the default is ``utf-8``::
 
     {{ encoded | b64decode(encoding='utf-16-le') }}
     {{ decoded | string | b64encode(encoding='utf-16-le') }}
@@ -2052,25 +1740,19 @@ As of version 2.6, you can define the type of encoding to use, the default is ``
 Managing UUIDs
 ==============
 
-To create a namespaced UUIDv5:
-
-.. code-block:: yaml+jinja
+To create a namespaced UUIDv5::
 
     {{ string | to_uuid(namespace='11111111-2222-3333-4444-555555555555') }}
 
 .. versionadded:: 2.10
 
-To create a namespaced UUIDv5 using the default Ansible namespace '361E6D51-FAEC-444A-9079-341386DA8E2E':
-
-.. code-block:: yaml+jinja
+To create a namespaced UUIDv5 using the default Ansible namespace '361E6D51-FAEC-444A-9079-341386DA8E2E'::
 
     {{ string | to_uuid }}
 
 .. versionadded:: 1.9
 
-To make use of one attribute from each item in a list of complex variables, use the :func:`Jinja2 map filter <jinja2:jinja-filters.map>`:
-
-.. code-block:: yaml+jinja
+To make use of one attribute from each item in a list of complex variables, use the :func:`Jinja2 map filter <jinja2:jinja-filters.map>`::
 
     # get a comma-separated list of the mount points (for example, "/,/mnt/stuff") on a host
     {{ ansible_mounts | map(attribute='mount') | join(',') }}
@@ -2078,9 +1760,7 @@ To make use of one attribute from each item in a list of complex variables, use 
 Handling dates and times
 ========================
 
-To get a date object from a string use the `to_datetime` filter:
-
-.. code-block:: yaml+jinja
+To get a date object from a string use the `to_datetime` filter::
 
     # Get total amount of seconds between two dates. Default date format is %Y-%m-%d %H:%M:%S but you can pass your own format
     {{ (("2016-08-14 20:00:12" | to_datetime) - ("2015-12-25" | to_datetime('%Y-%m-%d'))).total_seconds()  }}
@@ -2096,9 +1776,7 @@ To get a date object from a string use the `to_datetime` filter:
 
 .. versionadded:: 2.4
 
-To format a date using a string (like with the shell date command), use the "strftime" filter:
-
-.. code-block:: yaml+jinja
+To format a date using a string (like with the shell date command), use the "strftime" filter::
 
     # Display year-month-day
     {{ '%Y-%m-%d' | strftime }}
@@ -2126,15 +1804,11 @@ Getting Kubernetes resource names
 	These filters have migrated to the `kubernetes.core <https://galaxy.ansible.com/kubernetes/core>`_ collection. Follow the installation instructions to install that collection.
 
 Use the "k8s_config_resource_name" filter to obtain the name of a Kubernetes ConfigMap or Secret,
-including its hash:
+including its hash::
 
-.. code-block:: yaml+jinja
+    {{ configmap_resource_definition | kuberernetes.core.k8s_config_resource_name }}
 
-    {{ configmap_resource_definition | kubernetes.core.k8s_config_resource_name }}
-
-This can then be used to reference hashes in Pod specifications:
-
-.. code-block:: yaml+jinja
+This can then be used to reference hashes in Pod specifications::
 
     my_secret:
       kind: Secret
@@ -2149,7 +1823,7 @@ This can then be used to reference hashes in Pod specifications:
             containers:
             - envFrom:
                 - secretRef:
-                    name: {{ my_secret | kubernetes.core.k8s_config_resource_name }}
+                    name: {{ my_secret | kuberernetes.core.k8s_config_resource_name }}
 
 .. versionadded:: 2.8
 
